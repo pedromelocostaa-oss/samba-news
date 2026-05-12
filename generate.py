@@ -28,21 +28,31 @@ RSS_FEEDS = {
         "https://feeds.npr.org/1001/rss.xml",
         "https://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml",
         "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml",
+        "https://rss.cnn.com/rss/edition.rss",
+        "https://time.com/feed/",
+        "https://www.cnbc.com/id/100003114/device/rss/rss.html",
     ],
     "brasil": [
         "https://g1.globo.com/rss/g1/",
         "https://www.bbc.com/portuguese/rss.xml",
         "https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.rss",
+        "https://www.cnnbrasil.com.br/feed/",
+        "https://www.metropoles.com/feed/",
+        "https://www.correiobraziliense.com.br/rss/ultimas-noticias/feed.xml",
     ],
     "economia": [
         "https://feeds.bbci.co.uk/news/business/rss.xml",
         "https://www.infomoney.com.br/feed/",
         "https://feeds.reuters.com/reuters/businessNews",
+        "https://www.cnbc.com/id/10000664/device/rss/rss.html",
+        "https://feeds.businessinsider.com/custom/all",
     ],
     "tech": [
         "https://www.theverge.com/rss/index.xml",
         "https://techcrunch.com/feed/",
         "https://feeds.wired.com/wired/index",
+        "https://feeds.arstechnica.com/arstechnica/index",
+        "https://feeds.businessinsider.com/custom/tech",
     ],
 }
 
