@@ -12,7 +12,7 @@ import sys
 from datetime import datetime
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+from email.mime.text import MIMETexth
 from email import encoders
 from anthropic import Anthropic
 
@@ -207,13 +207,33 @@ def render_html(content, dt):
 <body style="margin:0;padding:0;background-color:#f3f4f6;font-family:Inter,Arial,sans-serif;">
 <div style="max-width:680px;margin:0 auto;background-color:#ffffff;">
   <div style="padding:32px 40px 24px 40px;text-align:center;border-bottom:1px solid #e5e7eb;">
+
     <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
+
       <table cellpadding="0" cellspacing="0"><tr>
-        <td style="vertical-align:middle;padding-right:10px;"><img src="https://i.imgur.com/ZaTaNGB.png" width="28" height="28" alt="Samba News" style="display:block;"></td>
-        <td style="vertical-align:middle;"><span style="font-size:20px;font-weight:700;color:#1a1a1a;font-family:Inter,Arial,sans-serif;">samba news</span></td>
+
+        <td style="vertical-align:middle;padding-right:10px;">
+
+          <div style="width:36px;height:36px;border-radius:50%;background-color:#28a745;text-align:center;line-height:36px;">
+
+            <div style="width:13px;height:13px;border-radius:50%;background-color:#f5c842;display:inline-block;vertical-align:middle;margin-top:-1px;"></div>
+
+          </div>
+
+        </td>
+
+        <td style="vertical-align:middle;">
+
+          <span style="font-size:22px;font-weight:700;color:#1a237e;font-family:Inter,Arial,sans-serif;letter-spacing:-0.5px;">samba news</span>
+
+        </td>
+
       </tr></table>
+
     </td></tr></table>
+
     <p style="font-size:11px;letter-spacing:2px;color:#9ca3af;margin:12px 0 0 0;font-weight:500;font-family:Inter,Arial,sans-serif;">{date_label}</p>
+
   </div>
   <div style="padding:32px 40px 28px 40px;text-align:center;border-bottom:3px solid #f5c842;">
     <h1 style="font-family:Inter,Arial,sans-serif;font-size:26px;font-weight:700;color:#1a1a1a;margin:0 0 12px 0;">{content["motivational_title"]}</h1>
