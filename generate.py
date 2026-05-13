@@ -24,7 +24,7 @@ RECIPIENT_EMAIL    = os.environ["RECIPIENT_EMAIL"]
 client = Anthropic(api_key=ANTHROPIC_API_KEY)
 
 RSS_FEEDS = {
-    "eua": [
+    "eua": [h
         "https://feeds.npr.org/1001/rss.xml",
         "https://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml",
         "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml",
@@ -85,9 +85,19 @@ def fetch_feeds(section):
     return items[:12]
 
 def generate_content(feeds):
-    prompt = f"""Você é o editor da Samba News, newsletter diária em português para brasileiros nos EUA. Tom: leve, claro, apartidário, focado no imigrante ("o que isso significa pra quem mora nos EUA?").
+    prompt = f"""Você é o editor da Samba News, newsletter diária em português para brasileiros nos EUA. Tom: leve, claro, apartidário e humano. Cada seção tem uma notícia principal completa e 3 links rápidos ao final.
 
-Com as notícias abaixo, escolha UMA notícia principal por seção e escreva o conteúdo completo.
+CRITÉRIOS DE SELEÇÃO POR SEÇÃO:
+
+🇺🇸 EUA — Escolha a notícia de MAIOR REPERCUSSÃO NACIONAL nos EUA naquele dia. A que qualquer americano estaria comentando. Se houver empate, prefira a que tiver impacto direto no bolso ou no cotidiano de quem mora lá. Não precisa ser sobre imigração — pode ser política, economia americana, saúde, clima, segurança ou sociedade. Os 3 links rápidos devem cobrir temas DIFERENTES da notícia principal.
+
+🇧🇷 BRASIL — Escolha a notícia que quem está longe do Brasil mais sentiria falta de saber. A que familiares e amigos no Brasil estariam comentando naquele dia. Se houver empate, prefira política ou economia por terem impacto mais duradouro. Os 3 links rápidos devem cobrir temas DIFERENTES da notícia principal (ex: se a principal for sobre STF, os links podem ser sobre economia, cultura e esporte).
+
+💵 ECONOMIA — Escolha a notícia de maior impacto prático para quem tem vida financeira nos dois países: ganha em dólar, manda dinheiro pro Brasil ou tem investimentos nos dois lados. Prioridade: câmbio, juros americanos, economia brasileira. Os 3 links rápidos devem cobrir outros temas econômicos relevantes, sem repetir o assunto principal.
+
+💻 TECH E NEGÓCIOS — Escolha a notícia que mais impacta o futuro do trabalho e da vida digital. Prioridade: IA, Big Tech (Apple, Google, Meta, Amazon, Microsoft, OpenAI), carreira em tech e regulação de tecnologia. Os 3 links rápidos devem cobrir outros temas de tech ou negócios, sem repetir o assunto principal.
+
+REGRA GERAL PARA LINKS RÁPIDOS: os 3 links de cada seção nunca repetem o tema da notícia principal daquela seção. Use notícias reais dos feeds fornecidos.
 
 NOTÍCIAS DISPONÍVEIS:
 
@@ -103,57 +113,13 @@ NOTÍCIAS DISPONÍVEIS:
 === TECH E NEGÓCIOS ===
 {json.dumps(feeds["tech"], ensure_ascii=False, indent=2)}
 
-INSTRUÇÕES:
+INSTRUÇÕES DE ESCRITA:
 - Escreva em português brasileiro, tom direto e humano
 - Cada parágrafo: 2-3 frases curtas e claras
 - "why_it_matters": sempre conectar com a realidade do brasileiro nos EUA
-- "leia_mais": use URLs reais das notícias fornecidas, não invente
+- "leia_mais": use URLs reais das notícias fornecidas, nunca invente URLs
 - Retorne SOMENTE JSON válido, sem markdown, sem explicação
-
-ESTRUTURA JSON:
-{{
-  "motivational_title": "título filosófico curto (2-4 palavras)",
-  "motivational_phrase": "frase inspiradora relacionada ao título (1-2 linhas)",
-  "sections": [
-    {{
-      "id": "eua",
-      "label": "ESTADOS UNIDOS",
-      "emoji": "🇺🇸",
-      "story_title": "título da notícia em português",
-      "source": "Nome da Fonte",
-      "paragraph_1": "fatos principais",
-      "paragraph_2": "contexto ou perspectiva oposta",
-      "paragraph_3": "o que pode acontecer a seguir",
-      "why_it_matters": "relevância para brasileiros nos EUA",
-      "leia_mais": [
-        {{"title": "título", "source": "Fonte", "url": "https://..."}},
-        {{"title": "título", "source": "Fonte", "url": "https://..."}},
-        {{"title": "título", "source": "Fonte", "url": "https://..."}}
-      ]
-    }},
-    {{
-      "id": "brasil", "label": "BRASIL", "emoji": "🇧🇷",
-      "story_title": "...", "source": "...",
-      "paragraph_1": "...", "paragraph_2": "...", "paragraph_3": "...",
-      "why_it_matters": "...",
-      "leia_mais": [{{"title":"...","source":"...","url":"..."}},{{"title":"...","source":"...","url":"..."}},{{"title":"...","source":"...","url":"..."}}]
-    }},
-    {{
-      "id": "economia", "label": "ECONOMIA", "emoji": "💵",
-      "story_title": "...", "source": "...",
-      "paragraph_1": "...", "paragraph_2": "...", "paragraph_3": "...",
-      "why_it_matters": "...",
-      "leia_mais": [{{"title":"...","source":"...","url":"..."}},{{"title":"...","source":"...","url":"..."}},{{"title":"...","source":"...","url":"..."}}]
-    }},
-    {{
-      "id": "tech", "label": "TECH E NEGÓCIOS", "emoji": "💻",
-      "story_title": "...", "source": "...",
-      "paragraph_1": "...", "paragraph_2": "...", "paragraph_3": "...",
-      "why_it_matters": "...",
-      "leia_mais": [{{"title":"...","source":"...","url":"..."}},{{"title":"...","source":"...","url":"..."}},{{"title":"...","source":"...","url":"..."}}]
-    }}
-  ]
-}}"""
+"""
 
     message = client.messages.create(
         model="claude-sonnet-4-6",
