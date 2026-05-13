@@ -12,7 +12,7 @@ import sys
 from datetime import datetime
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMETexth
+from email.mime.text import MIMEText
 from email import encoders
 from anthropic import Anthropic
 
