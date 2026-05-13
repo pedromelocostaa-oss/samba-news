@@ -24,7 +24,7 @@ RECIPIENT_EMAIL    = os.environ["RECIPIENT_EMAIL"]
 client = Anthropic(api_key=ANTHROPIC_API_KEY)
 
 RSS_FEEDS = {
-    "eua": [h
+    "eua": [
         "https://feeds.npr.org/1001/rss.xml",
         "https://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml",
         "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml",
