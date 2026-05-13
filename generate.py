@@ -85,21 +85,22 @@ def fetch_feeds(section):
     return items[:12]
 
 def generate_content(feeds):
-    prompt = f"""Você é o editor da Samba News, newsletter diária em português para brasileiros nos EUA. Tom: leve, claro, apartidário e humano. Cada seção tem uma notícia principal completa e 3 links rápidos ao final.
+    prompt = f"""Você é o editor da Samba News, newsletter diária em português para brasileiros nos EUA.
+Tom: leve, claro, apartidário e humano. Cada seção tem uma notícia principal completa e 3 links rápidos ao final.
 
 CRITÉRIOS DE SELEÇÃO POR SEÇÃO:
 
-🇺🇸 EUA — Escolha a notícia de MAIOR REPERCUSSÃO NACIONAL nos EUA naquele dia. A que qualquer americano estaria comentando. Se houver empate, prefira a que tiver impacto direto no bolso ou no cotidiano de quem mora lá. Não precisa ser sobre imigração — pode ser política, economia americana, saúde, clima, segurança ou sociedade. Os 3 links rápidos devem cobrir temas DIFERENTES da notícia principal.
+EUA — Escolha a notícia de MAIOR REPERCUSSÃO NACIONAL nos EUA naquele dia. A que qualquer americano estaria comentando. Se houver empate, prefira a que tiver impacto direto no bolso ou no cotidiano de quem mora lá. Não precisa ser sobre imigração — pode ser política, economia americana, saúde, clima, segurança ou sociedade. Os 3 links rápidos devem cobrir temas DIFERENTES da notícia principal.
 
-🇧🇷 BRASIL — Escolha a notícia que quem está longe do Brasil mais sentiria falta de saber. A que familiares e amigos no Brasil estariam comentando naquele dia. Se houver empate, prefira política ou economia por terem impacto mais duradouro. Os 3 links rápidos devem cobrir temas DIFERENTES da notícia principal (ex: se a principal for sobre STF, os links podem ser sobre economia, cultura e esporte).
+BRASIL — Escolha a notícia que quem está longe do Brasil mais sentiria falta de saber. A que familiares e amigos no Brasil estariam comentando naquele dia. Se houver empate, prefira política ou economia por terem impacto mais duradouro. Os 3 links rápidos devem cobrir temas DIFERENTES da notícia principal.
 
-💵 ECONOMIA — Escolha a notícia de maior impacto prático para quem tem vida financeira nos dois países: ganha em dólar, manda dinheiro pro Brasil ou tem investimentos nos dois lados. Prioridade: câmbio, juros americanos, economia brasileira. Os 3 links rápidos devem cobrir outros temas econômicos relevantes, sem repetir o assunto principal.
+ECONOMIA — Escolha a notícia de maior impacto prático para quem tem vida financeira nos dois países: ganha em dólar, manda dinheiro pro Brasil ou tem investimentos nos dois lados. Prioridade: câmbio, juros americanos, economia brasileira. Os 3 links rápidos devem cobrir outros temas econômicos, sem repetir o assunto principal.
 
-💻 TECH E NEGÓCIOS — Escolha a notícia que mais impacta o futuro do trabalho e da vida digital. Prioridade: IA, Big Tech (Apple, Google, Meta, Amazon, Microsoft, OpenAI), carreira em tech e regulação de tecnologia. Os 3 links rápidos devem cobrir outros temas de tech ou negócios, sem repetir o assunto principal.
+TECH E NEGOCIOS — Escolha a notícia que mais impacta o futuro do trabalho e da vida digital. Prioridade: IA, Big Tech (Apple, Google, Meta, Amazon, Microsoft, OpenAI), carreira em tech e regulação de tecnologia. Os 3 links rápidos devem cobrir outros temas de tech ou negócios, sem repetir o assunto principal.
 
-REGRA GERAL PARA LINKS RÁPIDOS: os 3 links de cada seção nunca repetem o tema da notícia principal daquela seção. Use notícias reais dos feeds fornecidos.
+REGRA GERAL: os 3 links de cada seção nunca repetem o tema da notícia principal. Use URLs reais dos feeds fornecidos, nunca invente URLs.
 
-NOTÍCIAS DISPONÍVEIS:
+NOTICIAS DISPONIVEIS:
 
 === EUA ===
 {json.dumps(feeds["eua"], ensure_ascii=False, indent=2)}
@@ -110,16 +111,86 @@ NOTÍCIAS DISPONÍVEIS:
 === ECONOMIA ===
 {json.dumps(feeds["economia"], ensure_ascii=False, indent=2)}
 
-=== TECH E NEGÓCIOS ===
+=== TECH E NEGOCIOS ===
 {json.dumps(feeds["tech"], ensure_ascii=False, indent=2)}
 
-INSTRUÇÕES DE ESCRITA:
+INSTRUCOES DE ESCRITA:
 - Escreva em português brasileiro, tom direto e humano
 - Cada parágrafo: 2-3 frases curtas e claras
-- "why_it_matters": sempre conectar com a realidade do brasileiro nos EUA
-- "leia_mais": use URLs reais das notícias fornecidas, nunca invente URLs
+- why_it_matters: sempre conectar com a realidade do brasileiro nos EUA
 - Retorne SOMENTE JSON válido, sem markdown, sem explicação
-"""
+
+ESTRUTURA JSON OBRIGATORIA (use exatamente estes nomes de campos):
+{{
+  "motivational_title": "título filosófico curto (2-4 palavras)",
+  "motivational_phrase": "frase inspiradora relacionada ao título (1-2 linhas)",
+  "sections": [
+    {{
+      "id": "eua",
+      "label": "ESTADOS UNIDOS",
+      "emoji": "🇺🇸",
+      "story_title": "título da notícia principal em português",
+      "source": "Nome da Fonte",
+      "paragraph_1": "fatos principais",
+      "paragraph_2": "contexto ou perspectiva oposta",
+      "paragraph_3": "o que pode acontecer a seguir",
+      "why_it_matters": "relevância para brasileiros nos EUA",
+      "leia_mais": [
+        {{"title": "título", "source": "Fonte", "url": "https://..."}},
+        {{"title": "título", "source": "Fonte", "url": "https://..."}},
+        {{"title": "título", "source": "Fonte", "url": "https://..."}}
+      ]
+    }},
+    {{
+      "id": "brasil",
+      "label": "BRASIL",
+      "emoji": "🇧🇷",
+      "story_title": "título da notícia principal em português",
+      "source": "Nome da Fonte",
+      "paragraph_1": "fatos principais",
+      "paragraph_2": "contexto ou perspectiva oposta",
+      "paragraph_3": "o que pode acontecer a seguir",
+      "why_it_matters": "relevância para brasileiros nos EUA",
+      "leia_mais": [
+        {{"title": "título", "source": "Fonte", "url": "https://..."}},
+        {{"title": "título", "source": "Fonte", "url": "https://..."}},
+        {{"title": "título", "source": "Fonte", "url": "https://..."}}
+      ]
+    }},
+    {{
+      "id": "economia",
+      "label": "ECONOMIA",
+      "emoji": "💵",
+      "story_title": "título da notícia principal em português",
+      "source": "Nome da Fonte",
+      "paragraph_1": "fatos principais",
+      "paragraph_2": "contexto ou perspectiva oposta",
+      "paragraph_3": "o que pode acontecer a seguir",
+      "why_it_matters": "relevância para brasileiros nos EUA",
+      "leia_mais": [
+        {{"title": "título", "source": "Fonte", "url": "https://..."}},
+        {{"title": "título", "source": "Fonte", "url": "https://..."}},
+        {{"title": "título", "source": "Fonte", "url": "https://..."}}
+      ]
+    }},
+    {{
+      "id": "tech",
+      "label": "TECH E NEGÓCIOS",
+      "emoji": "💻",
+      "story_title": "título da notícia principal em português",
+      "source": "Nome da Fonte",
+      "paragraph_1": "fatos principais",
+      "paragraph_2": "contexto ou perspectiva oposta",
+      "paragraph_3": "o que pode acontecer a seguir",
+      "why_it_matters": "relevância para brasileiros nos EUA",
+      "leia_mais": [
+        {{"title": "título", "source": "Fonte", "url": "https://..."}},
+        {{"title": "título", "source": "Fonte", "url": "https://..."}},
+        {{"title": "título", "source": "Fonte", "url": "https://..."}}
+      ]
+    }}
+  ]
+}}"""
 
     message = client.messages.create(
         model="claude-sonnet-4-6",
@@ -172,49 +243,43 @@ def render_html(content, dt):
 </head>
 <body style="margin:0;padding:0;background-color:#f3f4f6;font-family:Inter,Arial,sans-serif;">
 <div style="max-width:680px;margin:0 auto;background-color:#ffffff;">
+
   <div style="padding:32px 40px 24px 40px;text-align:center;border-bottom:1px solid #e5e7eb;">
-
     <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
-
       <table cellpadding="0" cellspacing="0"><tr>
-
         <td style="vertical-align:middle;padding-right:10px;">
-
           <div style="width:36px;height:36px;border-radius:50%;background-color:#28a745;text-align:center;line-height:36px;">
-
             <div style="width:13px;height:13px;border-radius:50%;background-color:#f5c842;display:inline-block;vertical-align:middle;margin-top:-1px;"></div>
-
           </div>
-
         </td>
-
         <td style="vertical-align:middle;">
-
           <span style="font-size:22px;font-weight:700;color:#1a237e;font-family:Inter,Arial,sans-serif;letter-spacing:-0.5px;">samba news</span>
-
         </td>
-
       </tr></table>
-
     </td></tr></table>
-
     <p style="font-size:11px;letter-spacing:2px;color:#9ca3af;margin:12px 0 0 0;font-weight:500;font-family:Inter,Arial,sans-serif;">{date_label}</p>
-
   </div>
+
   <div style="padding:32px 40px 28px 40px;text-align:center;border-bottom:3px solid #f5c842;">
     <h1 style="font-family:Inter,Arial,sans-serif;font-size:26px;font-weight:700;color:#1a1a1a;margin:0 0 12px 0;">{content["motivational_title"]}</h1>
     <p style="font-style:italic;color:#4b5563;font-size:16px;line-height:1.6;margin:0;font-family:Inter,Arial,sans-serif;">{content["motivational_phrase"]}</p>
   </div>
+
   <div style="background-color:#f9f7f2;padding:24px 40px;border-bottom:1px solid #e5e7eb;">
     <p style="font-size:11px;font-weight:700;letter-spacing:2px;color:#9ca3af;margin:0 0 16px 0;font-family:Inter,Arial,sans-serif;">NA EDIÇÃO DE HOJE</p>
     <ul style="list-style:none;padding:0;margin:0;font-family:Inter,Arial,sans-serif;">{summary_items}</ul>
   </div>
+
   <div style="padding:40px 40px 16px 40px;">{sections_html}</div>
+
   <div style="background-color:#1a1a1a;padding:28px 40px;text-align:center;">
-    <img src="https://i.imgur.com/ZaTaNGB.png" width="22" height="22" alt="" style="display:inline-block;margin-bottom:10px;">
-    <p style="color:#9ca3af;font-size:13px;margin:0 0 6px 0;font-family:Inter,Arial,sans-serif;">Feito com 💚 para brasileiros nos EUA</p>
+    <div style="width:28px;height:28px;border-radius:50%;background-color:#28a745;text-align:center;line-height:28px;display:inline-block;margin-bottom:10px;">
+      <div style="width:10px;height:10px;border-radius:50%;background-color:#f5c842;display:inline-block;vertical-align:middle;margin-top:-1px;"></div>
+    </div>
+    <p style="color:#9ca3af;font-size:13px;margin:0 0 6px 0;font-family:Inter,Arial,sans-serif;">Feito com amor para brasileiros nos EUA</p>
     <p style="color:#6b7280;font-size:12px;margin:0;font-family:Inter,Arial,sans-serif;">Você recebe este email porque se inscreveu na Samba News.</p>
   </div>
+
 </div>
 </body>
 </html>"""
@@ -238,7 +303,7 @@ def send_email(html, subject):
 
 def main():
     now = datetime.now()
-    print(f"🗞  Samba News — {date_str_pt(now)}")
+    print(f"Samba News — {date_str_pt(now)}")
     feeds = {
         "eua":      fetch_feeds("eua"),
         "brasil":   fetch_feeds("brasil"),
@@ -247,9 +312,9 @@ def main():
     }
     content = generate_content(feeds)
     html    = render_html(content, now)
-    subject = f"🗞 Samba News — {now.strftime('%d/%m/%Y')} [PREVIEW]"
+    subject = f"Samba News — {now.strftime('%d/%m/%Y')} [PREVIEW]"
     send_email(html, subject)
-    print("✅ Concluído!")
+    print("Concluido!")
 
 if __name__ == "__main__":
     main()
