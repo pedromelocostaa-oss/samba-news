@@ -3,7 +3,7 @@
 Samba News — Daily Newsletter Generator
 Fetches RSS feeds, generates content with Claude, sends HTML preview via Gmail.
 """
-
+ 
 import feedparser
 import json
 import os
@@ -15,14 +15,14 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email import encoders
 from anthropic import Anthropic
-
+ 
 ANTHROPIC_API_KEY  = os.environ["ANTHROPIC_API_KEY"]
 GMAIL_USER         = os.environ["GMAIL_USER"]
 GMAIL_APP_PASSWORD = os.environ["GMAIL_APP_PASSWORD"]
 RECIPIENT_EMAIL    = os.environ["RECIPIENT_EMAIL"]
-
+ 
 client = Anthropic(api_key=ANTHROPIC_API_KEY)
-
+ 
 RSS_FEEDS = {
     "eua": [
         "https://feeds.npr.org/1001/rss.xml",
@@ -55,15 +55,15 @@ RSS_FEEDS = {
         "https://feeds.businessinsider.com/custom/tech",
     ],
 }
-
+ 
 MONTHS_PT   = {1:"JANEIRO",2:"FEVEREIRO",3:"MARÇO",4:"ABRIL",5:"MAIO",6:"JUNHO",
                7:"JULHO",8:"AGOSTO",9:"SETEMBRO",10:"OUTUBRO",11:"NOVEMBRO",12:"DEZEMBRO"}
 WEEKDAYS_PT = {0:"SEGUNDA-FEIRA",1:"TERÇA-FEIRA",2:"QUARTA-FEIRA",
                3:"QUINTA-FEIRA",4:"SEXTA-FEIRA",5:"SÁBADO",6:"DOMINGO"}
-
+ 
 def date_str_pt(dt):
     return f"{WEEKDAYS_PT[dt.weekday()]}, {dt.day} DE {MONTHS_PT[dt.month]} DE {dt.year}"
-
+ 
 def fetch_feeds(section):
     items = []
     for url in RSS_FEEDS.get(section, []):
@@ -83,43 +83,62 @@ def fetch_feeds(section):
         except Exception as e:
             print(f"[WARN] Feed error ({url}): {e}", file=sys.stderr)
     return items[:12]
-
+ 
 def generate_content(feeds):
     prompt = f"""Você é o editor da Samba News, newsletter diária em português para brasileiros nos EUA.
 Tom: leve, claro, apartidário e humano. Cada seção tem uma notícia principal completa e 3 links rápidos ao final.
-
+ 
 CRITÉRIOS DE SELEÇÃO POR SEÇÃO:
-
+ 
 EUA — Escolha a notícia de MAIOR REPERCUSSÃO NACIONAL nos EUA naquele dia. A que qualquer americano estaria comentando. Se houver empate, prefira a que tiver impacto direto no bolso ou no cotidiano de quem mora lá. Não precisa ser sobre imigração — pode ser política, economia americana, saúde, clima, segurança ou sociedade. Os 3 links rápidos devem cobrir temas DIFERENTES da notícia principal.
-
+ 
 BRASIL — Escolha a notícia que quem está longe do Brasil mais sentiria falta de saber. A que familiares e amigos no Brasil estariam comentando naquele dia. Se houver empate, prefira política ou economia por terem impacto mais duradouro. Os 3 links rápidos devem cobrir temas DIFERENTES da notícia principal.
-
+ 
 ECONOMIA — Escolha a notícia de maior impacto prático para quem tem vida financeira nos dois países: ganha em dólar, manda dinheiro pro Brasil ou tem investimentos nos dois lados. Prioridade: câmbio, juros americanos, economia brasileira. Os 3 links rápidos devem cobrir outros temas econômicos, sem repetir o assunto principal.
-
+ 
 TECH E NEGOCIOS — Escolha a notícia que mais impacta o futuro do trabalho e da vida digital. Prioridade: IA, Big Tech (Apple, Google, Meta, Amazon, Microsoft, OpenAI), carreira em tech e regulação de tecnologia. Os 3 links rápidos devem cobrir outros temas de tech ou negócios, sem repetir o assunto principal.
-
+ 
 REGRA GERAL: os 3 links de cada seção nunca repetem o tema da notícia principal. Use URLs reais dos feeds fornecidos, nunca invente URLs.
-
+ 
 NOTICIAS DISPONIVEIS:
-
+ 
 === EUA ===
 {json.dumps(feeds["eua"], ensure_ascii=False, indent=2)}
-
+ 
 === BRASIL ===
 {json.dumps(feeds["brasil"], ensure_ascii=False, indent=2)}
-
+ 
 === ECONOMIA ===
 {json.dumps(feeds["economia"], ensure_ascii=False, indent=2)}
-
+ 
 === TECH E NEGOCIOS ===
 {json.dumps(feeds["tech"], ensure_ascii=False, indent=2)}
-
-INSTRUCOES DE ESCRITA:
-- Escreva em português brasileiro, tom direto e humano
-- Cada parágrafo: 2-3 frases curtas e claras
-- why_it_matters: sempre conectar com a realidade do brasileiro nos EUA
+ 
+INSTRUCOES DE ESCRITA — ESTILO THE NEWS:
+Escreva como um amigo bem informado explicando a notícia num café. Não como jornalista. Não como professor. Como alguém que entende do assunto e quer que você entenda também, em 5 minutos.
+ 
+REGRAS DE OURO:
+- Frases curtas. Máximo 20 palavras por frase. Se ficou longa, corta em duas.
+- Sem jargão. "Banco Central elevou a Selic" vira "os juros subiram de novo".
+- Use números concretos. Não "muitas empresas". Use "47 empresas" ou "1 em cada 3".
+- Fale direto com o leitor. Use "você" sempre que fizer sentido.
+- Sem linguagem de jornal formal. Nada de "segundo informou", "conforme declarou", "de acordo com fontes".
+- Humor leve quando couber. Nunca forçado.
+ 
+ESTRUTURA DE CADA PARÁGRAFO:
+- paragraph_1 (gancho): comece com uma pergunta, dado surpreendente ou situação relatable. Ex: "Sabe aquela sensação de que o dinheiro não rende mais?" ou "Imagina acordar e descobrir que...". Apresente O QUE aconteceu de forma clara e direta. 2-3 frases.
+- paragraph_2 (contexto): explique POR QUE isso aconteceu ou qual é o cenário por trás. O leitor precisa entender a história completa, não só o fato isolado. 2-3 frases.
+- paragraph_3 (e agora?): o que vem por aí. Consequências práticas, próximos passos, o que o leitor deve ficar de olho. Termine sempre com uma perspectiva para frente. 2-3 frases.
+- why_it_matters: seja PESSOAL e ESPECÍFICO. Não "isso pode afetar a economia". Use "se você manda dinheiro pro Brasil todo mês, isso significa que..." ou "para quem trabalha em tech nos EUA...". 2-3 frases diretas.
+ 
+TITULO DA NOTICIA (story_title): curto, direto, sem verbo no infinitivo. Mais "Suprema Corte decide futuro do TPS" do que "Suprema Corte vai decidir sobre o futuro do programa TPS para imigrantes".
+ 
+TITULO MOTIVACIONAL: filosófico, provocativo, com no máximo 4 palavras. Exemplos: "Sobre esperar", "A arte de começar", "Quando tudo muda". Deve ter relação sutil com alguma notícia do dia.
+ 
+FRASE MOTIVACIONAL: complementa o título. Tom reflexivo, não autoajuda. 1-2 linhas em itálico. Ex: "A paciência não é a capacidade de esperar, mas a de manter uma boa atitude enquanto espera."
+ 
 - Retorne SOMENTE JSON válido, sem markdown, sem explicação
-
+ 
 ESTRUTURA JSON OBRIGATORIA (use exatamente estes nomes de campos):
 {{
   "motivational_title": "título filosófico curto (2-4 palavras)",
@@ -191,7 +210,7 @@ ESTRUTURA JSON OBRIGATORIA (use exatamente estes nomes de campos):
     }}
   ]
 }}"""
-
+ 
     message = client.messages.create(
         model="claude-sonnet-4-6",
         max_tokens=4096,
@@ -203,7 +222,7 @@ ESTRUTURA JSON OBRIGATORIA (use exatamente estes nomes de campos):
         end   = raw.rindex("}") + 1
         raw   = raw[start:end]
     return json.loads(raw)
-
+ 
 def render_html(content, dt):
     date_label = date_str_pt(dt)
     summary_items = "".join(
@@ -232,7 +251,7 @@ def render_html(content, dt):
           {leia_mais_html}
         </div>
         <hr style="border:none;border-top:2px solid #f3f4f6;margin:0 0 40px 0;">"""
-
+ 
     return f"""<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -243,7 +262,7 @@ def render_html(content, dt):
 </head>
 <body style="margin:0;padding:0;background-color:#f3f4f6;font-family:Inter,Arial,sans-serif;">
 <div style="max-width:680px;margin:0 auto;background-color:#ffffff;">
-
+ 
   <div style="padding:32px 40px 24px 40px;text-align:center;border-bottom:1px solid #e5e7eb;">
     <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
       <table cellpadding="0" cellspacing="0"><tr>
@@ -259,19 +278,19 @@ def render_html(content, dt):
     </td></tr></table>
     <p style="font-size:11px;letter-spacing:2px;color:#9ca3af;margin:12px 0 0 0;font-weight:500;font-family:Inter,Arial,sans-serif;">{date_label}</p>
   </div>
-
+ 
   <div style="padding:32px 40px 28px 40px;text-align:center;border-bottom:3px solid #f5c842;">
     <h1 style="font-family:Inter,Arial,sans-serif;font-size:26px;font-weight:700;color:#1a1a1a;margin:0 0 12px 0;">{content["motivational_title"]}</h1>
     <p style="font-style:italic;color:#4b5563;font-size:16px;line-height:1.6;margin:0;font-family:Inter,Arial,sans-serif;">{content["motivational_phrase"]}</p>
   </div>
-
+ 
   <div style="background-color:#f9f7f2;padding:24px 40px;border-bottom:1px solid #e5e7eb;">
     <p style="font-size:11px;font-weight:700;letter-spacing:2px;color:#9ca3af;margin:0 0 16px 0;font-family:Inter,Arial,sans-serif;">NA EDIÇÃO DE HOJE</p>
     <ul style="list-style:none;padding:0;margin:0;font-family:Inter,Arial,sans-serif;">{summary_items}</ul>
   </div>
-
+ 
   <div style="padding:40px 40px 16px 40px;">{sections_html}</div>
-
+ 
   <div style="background-color:#1a1a1a;padding:28px 40px;text-align:center;">
     <div style="width:28px;height:28px;border-radius:50%;background-color:#28a745;text-align:center;line-height:28px;display:inline-block;margin-bottom:10px;">
       <div style="width:10px;height:10px;border-radius:50%;background-color:#f5c842;display:inline-block;vertical-align:middle;margin-top:-1px;"></div>
@@ -279,11 +298,11 @@ def render_html(content, dt):
     <p style="color:#9ca3af;font-size:13px;margin:0 0 6px 0;font-family:Inter,Arial,sans-serif;">Feito com amor para brasileiros nos EUA</p>
     <p style="color:#6b7280;font-size:12px;margin:0;font-family:Inter,Arial,sans-serif;">Você recebe este email porque se inscreveu na Samba News.</p>
   </div>
-
+ 
 </div>
 </body>
 </html>"""
-
+ 
 def send_email(html, subject):
     msg = MIMEMultipart("mixed")
     msg["Subject"] = subject
@@ -300,7 +319,7 @@ def send_email(html, subject):
         server.login(GMAIL_USER, GMAIL_APP_PASSWORD)
         server.sendmail(GMAIL_USER, RECIPIENT_EMAIL, msg.as_string())
     print(f"✅ Email enviado para {RECIPIENT_EMAIL}")
-
+ 
 def main():
     now = datetime.now()
     print(f"Samba News — {date_str_pt(now)}")
@@ -315,6 +334,13 @@ def main():
     subject = f"Samba News — {now.strftime('%d/%m/%Y')} [PREVIEW]"
     send_email(html, subject)
     print("Concluido!")
-
+ 
 if __name__ == "__main__":
     main()
+ 
+
+
+
+
+
+
