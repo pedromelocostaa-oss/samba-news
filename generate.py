@@ -297,11 +297,24 @@ def render_story(story, option_label, option_color):
 def render_html(content, dt):
     date_label = date_str_pt(dt)
 
-    # Summary uses only the first story of each section
-    summary_items = "".join(
-        f'<li style="margin-bottom:10px;font-size:15px;color:#1f2937;">{s["emoji"]}&nbsp;{s["stories"][0]["story_title"]}</li>'
-        for s in content["sections"]
-    )
+    # Summary shows BOTH story titles per section so editor can choose which to use in Beehiiv
+    summary_items = ""
+    for s in content["sections"]:
+        stories = s.get("stories", [])
+        title_a = stories[0]["story_title"] if len(stories) > 0 else ""
+        title_b = stories[1]["story_title"] if len(stories) > 1 else ""
+        summary_items += f"""
+<li style="margin-bottom:16px;">
+  <span style="font-size:13px;font-weight:700;letter-spacing:1px;color:#1a5c2a;">{s["emoji"]} {s["label"]}</span><br>
+  <span style="display:inline-block;margin-top:6px;font-size:14px;color:#1f2937;">
+    <span style="background-color:#1a5c2a;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;letter-spacing:1px;vertical-align:middle;">OP1</span>
+    &nbsp;{title_a}
+  </span><br>
+  <span style="display:inline-block;margin-top:4px;font-size:14px;color:#4b5563;">
+    <span style="background-color:#374151;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;letter-spacing:1px;vertical-align:middle;">OP2</span>
+    &nbsp;{title_b}
+  </span>
+</li>"""
 
     sections_html = ""
     for s in content["sections"]:
