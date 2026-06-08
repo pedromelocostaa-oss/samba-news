@@ -395,6 +395,15 @@ def render_html(content, dt):
 
   <div style="padding:40px 40px 16px 40px;">{sections_html}</div>
 
+  <div style="background-color:#f9f7f2;border-top:3px solid #f5c842;padding:32px 40px;text-align:center;">
+    <p style="font-size:11px;font-weight:700;letter-spacing:2px;color:#9ca3af;margin:0 0 12px 0;font-family:Inter,Arial,sans-serif;">COMPARTILHE COM QUEM PRECISA</p>
+    <p style="font-size:16px;color:#1f2937;line-height:1.7;margin:0 0 24px 0;font-family:Inter,Arial,sans-serif;">Tem algum brasileiro no seu grupo que ainda não lê a Samba News?<br>Manda pra ele. É grátis e leva 5 minutos por dia.</p>
+    <a href="https://wa.me/?text=Todo+dia+gasto+5+minutos+lendo+a+Samba+News+e+j%C3%A1+sei+tudo+que+t%C3%A1+acontecendo+nos+EUA+e+no+Brasil.+Feita+por+quem+tamb%C3%A9m+vive+essa+vida+aqui.+%C3%89+gr%C3%A1tis%2C+s%C3%B3+entrar+no+link+e+se+inscrever%3A+sambanews.beehiiv.com%2Fsubscribe"
+       style="display:inline-block;background-color:#25D366;color:#ffffff;font-family:Inter,Arial,sans-serif;font-size:15px;font-weight:700;padding:14px 28px;border-radius:6px;text-decoration:none;letter-spacing:0.5px;">
+      📲 Compartilhar no WhatsApp
+    </a>
+  </div>
+
   <div style="background-color:#1a1a1a;padding:28px 40px;text-align:center;">
     <div style="width:28px;height:28px;border-radius:50%;background-color:#28a745;text-align:center;line-height:28px;display:inline-block;margin-bottom:10px;">
       <div style="width:10px;height:10px;border-radius:50%;background-color:#f5c842;display:inline-block;vertical-align:middle;margin-top:-1px;"></div>
